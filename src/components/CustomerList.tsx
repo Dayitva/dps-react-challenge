@@ -1,22 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './CustomerList.css';
 
+interface User {
+	id: number;
+	firstName: string;
+	lastName: string;
+	birthDate: string;
+	address: {
+		city: string;
+	};
+}
+
 const CustomerList: React.FC = () => {
+	const [users, setUsers] = useState<User[]>([]);
+
+	useEffect(() => {
+		fetch('https://dummyjson.com/users')
+			.then((response) => response.json())
+			.then((data) => setUsers(data.users));
+	}, []);
+
 	return (
 		<div className="customer-list">
 			<div className="filters">
-				<input
-					type="text"
-					placeholder="Search by name"
-				/>
+				<input type="text" placeholder="Search by name" />
 				<select>
 					<option value="">Select city</option>
 				</select>
 				<label>
 					Highlight oldest per city
-					<input
-						type="checkbox"
-					/>
+					<input type="checkbox" />
 				</label>
 			</div>
 			<table>
@@ -28,6 +41,15 @@ const CustomerList: React.FC = () => {
 					</tr>
 				</thead>
 				<tbody>
+					{users.map((user) => (
+						<tr key={user.id}>
+							<td>{`${user.firstName} ${user.lastName}`}</td>
+							<td>{user.address.city}</td>
+							<td>
+								{new Date(user.birthDate).toLocaleDateString()}
+							</td>
+						</tr>
+					))}
 				</tbody>
 			</table>
 		</div>
