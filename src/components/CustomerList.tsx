@@ -13,6 +13,8 @@ interface User {
 
 const CustomerList: React.FC = () => {
 	const [users, setUsers] = useState<User[]>([]);
+	const [nameFilter, setNameFilter] = useState('');
+	const [cityFilter, setCityFilter] = useState('');
 
 	useEffect(() => {
 		fetch('https://dummyjson.com/users')
@@ -25,11 +27,29 @@ const CustomerList: React.FC = () => {
 		return Array.from(citySet);
 	}, [users]);
 
+	const filteredUsers = useMemo(() => {
+		return users.filter((user) => {
+			const nameMatch = (user.firstName + ' ' + user.lastName)
+				.toLowerCase()
+				.includes(nameFilter.toLowerCase());
+			const cityMatch = !cityFilter || user.address.city === cityFilter;
+			return nameMatch && cityMatch;
+		});
+	}, [users, nameFilter, cityFilter]);
+
 	return (
 		<div className="customer-list">
 			<div className="filters">
-				<input type="text" placeholder="Search by name" />
-				<select>
+				<input
+					type="text"
+					placeholder="Search by name"
+					className="name-filter"
+					onChange={(e) => setNameFilter(e.target.value)}
+				/>
+				<select
+					onChange={(e) => setCityFilter(e.target.value)}
+					className="city-filter"
+				>
 					<option value="">Select city</option>
 					{cities.map((city) => (
 						<option key={city} value={city}>
@@ -51,7 +71,7 @@ const CustomerList: React.FC = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{users.map((user) => (
+					{filteredUsers.map((user) => (
 						<tr key={user.id}>
 							<td>{`${user.firstName} ${user.lastName}`}</td>
 							<td>{user.address.city}</td>

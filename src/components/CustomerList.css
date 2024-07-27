@@ -11,6 +11,13 @@
 	margin-bottom: 20px;
 }
 
+.name-filter,
+.city-filter {
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;
