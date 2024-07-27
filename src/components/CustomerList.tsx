@@ -15,6 +15,7 @@ const CustomerList: React.FC = () => {
 	const [users, setUsers] = useState<User[]>([]);
 	const [nameFilter, setNameFilter] = useState('');
 	const [cityFilter, setCityFilter] = useState('');
+	const [highlightOldest, setHighlightOldest] = useState(false);
 
 	useEffect(() => {
 		fetch('https://dummyjson.com/users')
@@ -37,6 +38,21 @@ const CustomerList: React.FC = () => {
 		});
 	}, [users, nameFilter, cityFilter]);
 
+	const oldestPerCity = useMemo(() => {
+		const cityMap = new Map<string, User>();
+		filteredUsers.forEach((user) => {
+			const city = user.address.city;
+			if (
+				!cityMap.has(city) ||
+				new Date(user.birthDate) <
+					new Date(cityMap.get(city)!.birthDate)
+			) {
+				cityMap.set(city, user);
+			}
+		});
+		return new Set(Array.from(cityMap.values()).map((user) => user.id));
+	}, [filteredUsers]);
+
 	return (
 		<div className="customer-list">
 			<div className="filters">
@@ -57,9 +73,13 @@ const CustomerList: React.FC = () => {
 						</option>
 					))}
 				</select>
-				<label>
+				<label className="highlight-checkbox">
 					Highlight oldest per city
-					<input type="checkbox" />
+					<input
+						type="checkbox"
+						checked={highlightOldest}
+						onChange={(e) => setHighlightOldest(e.target.checked)}
+					/>
 				</label>
 			</div>
 			<table>
@@ -72,7 +92,14 @@ const CustomerList: React.FC = () => {
 				</thead>
 				<tbody>
 					{filteredUsers.map((user) => (
-						<tr key={user.id}>
+						<tr
+							key={user.id}
+							className={
+								highlightOldest && oldestPerCity.has(user.id)
+									? 'highlighted'
+									: ''
+							}
+						>
 							<td>{`${user.firstName} ${user.lastName}`}</td>
 							<td>{user.address.city}</td>
 							<td>

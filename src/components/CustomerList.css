@@ -18,6 +18,11 @@
 	border-radius: 4px;
 }
 
+.highlight-checkbox {
+	display: flex;
+	align-items: center;
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;
@@ -32,4 +37,8 @@ td {
 
 th {
 	background-color: #000000;
+}
+
+tr.highlighted {
+	background-color: #f33535;
 }
