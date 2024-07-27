@@ -1,5 +1,6 @@
 import dpsLogo from './assets/DPS.svg';
 import './App.css';
+import CustomerList from './components/CustomerList';
 
 function App() {
 	return (
@@ -10,7 +11,7 @@ function App() {
 				</a>
 			</div>
 			<div className="home-card">
-				<p>Your solution goes here 😊</p>
+				<CustomerList />
 			</div>
 		</>
 	);
