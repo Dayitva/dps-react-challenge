@@ -53,6 +53,14 @@ const CustomerList: React.FC = () => {
 		return new Set(Array.from(cityMap.values()).map((user) => user.id));
 	}, [filteredUsers]);
 
+	const debouncedSetNameFilter = useMemo(() => {
+		let timeoutId: NodeJS.Timeout;
+		return (value: string) => {
+			clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => setNameFilter(value), 1000);
+		};
+	}, []);
+
 	return (
 		<div className="customer-list">
 			<div className="filters">
@@ -60,7 +68,7 @@ const CustomerList: React.FC = () => {
 					type="text"
 					placeholder="Search by name"
 					className="name-filter"
-					onChange={(e) => setNameFilter(e.target.value)}
+					onChange={(e) => debouncedSetNameFilter(e.target.value)}
 				/>
 				<select
 					onChange={(e) => setCityFilter(e.target.value)}
