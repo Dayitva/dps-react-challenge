@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './CustomerList.css';
 
 interface User {
@@ -20,12 +20,22 @@ const CustomerList: React.FC = () => {
 			.then((data) => setUsers(data.users));
 	}, []);
 
+	const cities = useMemo(() => {
+		const citySet = new Set(users.map((user) => user.address.city));
+		return Array.from(citySet);
+	}, [users]);
+
 	return (
 		<div className="customer-list">
 			<div className="filters">
 				<input type="text" placeholder="Search by name" />
 				<select>
 					<option value="">Select city</option>
+					{cities.map((city) => (
+						<option key={city} value={city}>
+							{city}
+						</option>
+					))}
 				</select>
 				<label>
 					Highlight oldest per city
